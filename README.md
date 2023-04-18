@@ -10,3 +10,5 @@ https://www.oreilly.com/library/view/tensorflow-machine-learning/9781789132212/a
 http://ai.berkeley.edu/project_overview.html
 
 https://github.com/arshiyaansari/AI-Pacman-Project
+
+https://github.com/bourbonut/dqn-pacman
