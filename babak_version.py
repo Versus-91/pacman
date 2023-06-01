@@ -20,7 +20,7 @@ class GameController:
         self.columns = len(self.level[0])
         self.rows = len(self.level)
         self.width = self.num_cells * self.columns
-        self.height = self.num_cells * self.rows
+        self.height = self.num_cells * self.rows + 50
         self.screen = pygame.display.set_mode([self.width, self.height])
         self.frame_per_second = 60
         self.font = pygame.font.Font('freesansbold.ttf', 20)
@@ -70,16 +70,16 @@ class GameController:
         self.targets = [(self.player_x, self.player_y), (self.player_x, self.player_y),
                         (self.player_x, self.player_y), (self.player_x, self.player_y)]
         self.red = Ghost(self.red_x, self.red_y, self.targets[0], self.ghost_speed[0],
-                         self.red_gh, self.red_direct, self.red_dead, self.red_box, 0, self.level, self.num_cells, self.powerup, self.width, self.eaten_gh, self.screen)
+                         self.red_gh, self.red_direct, self.red_dead, self.red_box, 0, self.level, self.num_cells, self.powerup, self.width, self.eaten_gh, self.screen, self.poweredup, self.dead)
         # inky
         self.blue = Ghost(self.blue_x, self.blue_y, self.targets[1], self.ghost_speed[1],
-                          self.blue_gh, self.blue_direct, self.blue_dead, self.blue_box, 1, self.level, self.num_cells, self.powerup, self.width, self.eaten_gh, self.screen)
+                          self.blue_gh, self.blue_direct, self.blue_dead, self.blue_box, 1, self.level, self.num_cells, self.powerup, self.width, self.eaten_gh, self.screen, self.poweredup, self.dead)
         # pinky
         self.pink = Ghost(self.pink_x, self.pink_y, self.targets[2], self.ghost_speed[2],
-                          self.pink_gh, self.pink_direct, self.pink_dead, self.pink_box, 2, self.level, self.num_cells, self.powerup, self.width, self.eaten_gh, self.screen)
+                          self.pink_gh, self.pink_direct, self.pink_dead, self.pink_box, 2, self.level, self.num_cells, self.powerup, self.width, self.eaten_gh, self.screen, self.poweredup, self.dead)
         # clide
         self.oran = Ghost(self.or_x, self.or_y, self.targets[3], self.ghost_speed[3],
-                          self.or_gh, self.or_direct, self.or_dead, self.or_box, 3, self.level, self.num_cells, self.powerup, self.width, self.eaten_gh, self.screen)
+                          self.or_gh, self.or_direct, self.or_dead, self.or_box, 3, self.level, self.num_cells, self.powerup, self.width, self.eaten_gh, self.screen, self.poweredup, self.dead)
         self.draw_misc()
         # draw()
         targets = self.get_targets(self.red_x, self.red_y, self.blue_x,
@@ -118,6 +118,19 @@ class GameController:
     won = False
     lives = 3
     begin = False
+
+    def init_ghosts(self):
+        self.red = Ghost(self.red_x, self.red_y, self.targets[0], self.ghost_speed[0],
+                         self.red_gh, self.red_direct, self.red_dead, self.red_box, 0, self.level, self.num_cells, self.powerup, self.width, self.eaten_gh, self.screen, self.dead)
+        # inky
+        self.blue = Ghost(self.blue_x, self.blue_y, self.targets[1], self.ghost_speed[1],
+                          self.blue_gh, self.blue_direct, self.blue_dead, self.blue_box, 1, self.level, self.num_cells, self.powerup, self.width, self.eaten_gh, self.screen, self.dead)
+        # pinky
+        self.pink = Ghost(self.pink_x, self.pink_y, self.targets[2], self.ghost_speed[2],
+                          self.pink_gh, self.pink_direct, self.pink_dead, self.pink_box, 2, self.level, self.num_cells, self.powerup, self.width, self.eaten_gh, self.screen, self.dead)
+        # clide
+        self.oran = Ghost(self.or_x, self.or_y, self.targets[3], self.ghost_speed[3],
+                          self.or_gh, self.or_direct, self.or_dead, self.or_box, 3, self.level, self.num_cells, self.powerup, self.width, self.eaten_gh, self.screen, self.dead)
 
     def get_targets(self, red_x, red_y, blue_x, blue_y, pink_x, pink_y, or_x, or_y):
         if self.player_x < self.width/2:  # how to avoid player when power up is active
@@ -230,7 +243,7 @@ class GameController:
             pygame.draw.rect(self.screen, 'white', [
                              self.width/4-20, self.height/4, self.width/2+25, self.height/2], 0, 10)
             pygame.draw.rect(self.screen, 'black', [
-                             self.width/4-5, self.height/4+15, self.width/2, self.heighth/2-30], 0, 10)
+                             self.width/4-5, self.height/4+15, self.width/2, self.height/2-30], 0, 10)
             menu_text = self.font.render(
                 'You won! Press space to restart', True, 'green')
             self.screen.blit(menu_text, (self.width/4, self.height/2))
@@ -427,13 +440,13 @@ class GameController:
             # ghost
             if self.powerup:
                 self.ghost_speed = [1, 1.3, 1, 1.2]
-                if red_dead:
+                if self.red_dead:
                     self.ghost_speed[0] = 5
-                if blue_dead:
+                if self.blue_dead:
                     self.ghost_speed[1] = 3.5
-                if pink_dead:
+                if self.pink_dead:
                     self.ghost_speed[2] = 3.5
-                if or_dead:
+                if self.or_dead:
                     self.ghost_speed[3] = 4
 
             else:
@@ -454,7 +467,17 @@ class GameController:
                 self.ghost_speed[2] = 5
             if self.or_dead:
                 self.ghost_speed[3] = 5
-
+            self.red = Ghost(self.red_x, self.red_y, self.targets[0], self.ghost_speed[0],
+                             self.red_gh, self.red_direct, self.red_dead, self.red_box, 0, self.level, self.num_cells, self.powerup, self.width, self.eaten_gh, self.screen, self.poweredup, self.dead)
+            # inky
+            self.blue = Ghost(self.blue_x, self.blue_y, self.targets[1], self.ghost_speed[1],
+                              self.blue_gh, self.blue_direct, self.blue_dead, self.blue_box, 1, self.level, self.num_cells, self.powerup, self.width, self.eaten_gh, self.screen, self.poweredup, self.dead)
+            # pinky
+            self.pink = Ghost(self.pink_x, self.pink_y, self.targets[2], self.ghost_speed[2],
+                              self.pink_gh, self.pink_direct, self.pink_dead, self.pink_box, 2, self.level, self.num_cells, self.powerup, self.width, self.eaten_gh, self.screen, self.poweredup, self.dead)
+            # clide
+            self.oran = Ghost(self.or_x, self.or_y, self.targets[3], self.ghost_speed[3],
+                              self.or_gh, self.or_direct, self.or_dead, self.or_box, 3, self.level, self.num_cells, self.powerup, self.width, self.eaten_gh, self.screen, self.poweredup, self.dead)
             self.draw_misc()
             # draw()
             self.targets = self.get_targets(self.red_x, self.red_y, self.blue_x, self.blue_y,
@@ -489,7 +512,7 @@ class GameController:
                 else:
                     self.red_x, self.red_y, self.red_direct = self.red.move_or()
 
-                if not blue_dead and not self.blue.inbox:
+                if not self.blue_dead and not self.blue.inbox:
                     self.blue_x, self.blue_y, self.blue_direct = self.blue.move_blue()
                 else:
                     self.blue_x, self.blue_y, self.blue_direct = self.blue.move_or()
@@ -507,7 +530,7 @@ class GameController:
             self.score, self.powerup, self.power_count, self.eaten_gh = self.check_collisions(
                 self.score, self.powerup, self.power_count, self.eaten_gh)
 
-            if self.powerup and circle.colliderect(self.red.rect) and not self.red.dead and eaten_gh[0]:
+            if self.powerup and circle.colliderect(self.red.rect) and not self.red.dead and self.eaten_gh[0]:
                 if self.lives > 0:
                     self.lives -= 1
                     self.start = 0
@@ -660,7 +683,7 @@ class GameController:
             if self.powerup and circle.colliderect(self.pink.rect) and not self.pink.dead and not self.eaten_gh[2]:
                 self.pink_dead = True
                 self.eaten_gh[2] = True
-                self.score += (2 ** eaten_gh.count(True))*100
+                self.score += (2 ** self.eaten_gh.count(True))*100
 
             if self.powerup and circle.colliderect(self.oran.rect) and not self.oran.dead and not self.eaten_gh[3]:
                 self.or_dead = True
@@ -714,11 +737,11 @@ class GameController:
                 self.or_dead = False
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    run = False
+                    self.run = False
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE and not begin:
-                        begin = True
-                    if event.key == pygame.K_SPACE and (end or won):
+                    if event.key == pygame.K_SPACE and not self.begin:
+                        self.begin = True
+                    if event.key == pygame.K_SPACE and (self.end or self.won):
 
                         self.start = 0
                         self.powerup = False
@@ -783,6 +806,7 @@ class GameController:
                 self.player_x = self.width-3
             pygame.display.flip()
         pygame.quit()
+
 
 if __name__ == '__main__':
     game = GameController()

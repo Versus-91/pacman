@@ -2,12 +2,13 @@ import pygame
 
 
 class Ghost:
-    def __init__(self, x, y, target, speed, img, direction, dead, box, id, level, cell, powerup, w, eaten_ghosts, screen):
+    def __init__(self, x, y, target, speed, img, direction, dead, box, id, level, cell, powerup, w, eaten_ghosts, screen, poweredup, dead_img):
         self.x = x
         self.screen = screen
         self.eaten_ghosts = eaten_ghosts
         self.level = level
         self.powerup = powerup
+        self.poweredup = poweredup
         self.cell = cell
         self.w = w
         self.y = y
@@ -15,6 +16,7 @@ class Ghost:
         self.centery = self.y+cell//2
         self.target = target
         self.speed = speed
+        self.dead_image = dead_img
         self.img = img
         self.dead = dead
         self.direction = direction
@@ -24,12 +26,12 @@ class Ghost:
         self.rect = self.draw()
 
     def draw(self):
-        if (not self.powerup and not self.dead) or (self.eaten_gh[self.id] and self.powerup and not self.dead):
+        if (not self.powerup and not self.dead) or (self.eaten_ghosts[self.id] and self.powerup and not self.dead):
             self.screen.blit(self.img, (self.x, self.y))
-        elif self.powerup and not self.dead and not self.eaten_gh[self.id]:
+        elif self.powerup and not self.dead and not self.eaten_ghosts[self.id]:
             self.screen.blit(self.poweredup, (self.x, self.y))
         else:
-            self.screen.blit(self.dead, (self.x, self.y))
+            self.screen.blit(self.dead_image, (self.x, self.y))
 
         ghos_rect = pygame.rect.Rect(
             (self.centerx-self.cell//2, self.centery-self.cell//2), (self.cell, self.cell))
