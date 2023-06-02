@@ -412,8 +412,6 @@ class GameController:
         return x, y
 
     def update(self):
-        self.run = True
-        while self.run:
             self.clock.tick(self.frame_per_second)
             if self.counter < 19:  # spped of eating my pacman
                 self.counter += 1
@@ -810,9 +808,8 @@ class GameController:
             elif self.player_x < -5:
                 self.player_x = self.width-3
             pygame.display.flip()
-        pygame.quit()
 
-    def perform_action(self):
+    def perform_action(self, action):
         self.clock.tick(self.frame_per_second)
         if self.counter < 19:  # spped of eating my pacman
             self.counter += 1
@@ -1207,7 +1204,7 @@ class GameController:
                     self.direction_command = self.direction
                 if event.key == pygame.K_DOWN and self.direction_command == 0:
                     self.direction_command = self.direction
-            # self.direction_command = dircetion
+            self.direction_command = action
             # self.direction = dircetion
         for i in range(4):
             if self.direction_command == i and self.turns_allowed[i]:

@@ -206,6 +206,8 @@ class LearningAgent:
                 if self.steps % TARGET_UPDATE == 0:
                     self.target.load_state_dict(self.policy.state_dict())
                 start_time = time.time()
+            else:
+                self.game.update()
             if done:
                 assert reward_sum == reward
                 self.rewards.append(reward_sum)

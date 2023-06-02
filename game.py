@@ -21,7 +21,8 @@ class GameWrapper:
         self.action = UP
 
     def start(self):
-        self.controller.update()
+        self.controller.perform_action(0)
+
     def restart(self):
         self.controller.restartGame()
 
@@ -38,7 +39,7 @@ class GameWrapper:
         else:
             print("Invalid action", action)
         pygame.event.post(event)
-        data = self.controller.perform_action()
+        data = self.controller.perform_action(action)
         return (data[0], data[1], data[2], data[3])
 
     def pacman_position(self):
