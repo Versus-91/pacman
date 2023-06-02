@@ -412,404 +412,445 @@ class GameController:
         return x, y
 
     def update(self):
-            self.clock.tick(self.frame_per_second)
-            if self.counter < 19:  # spped of eating my pacman
-                self.counter += 1
-                if self.counter > 3:
-                    self.flicker = False
-            else:
-                self.counter = 0
-                self.flicker = True
+        if self.end:
+            self.restart()
+        self.clock.tick(self.frame_per_second)
+        if self.counter < 19:  # spped of eating my pacman
+            self.counter += 1
+            if self.counter > 3:
+                self.flicker = False
+        else:
+            self.counter = 0
+            self.flicker = True
 
-            if self.powerup and self.power_count < 600:
-                self.power_count += 1
-            elif self.powerup and self.power_count >= 600:
-                self.power_count = 0
-                self.powerup = False
-                self.eaten_gh = [False, False, False, False]
+        if self.powerup and self.power_count < 600:
+            self.power_count += 1
+        elif self.powerup and self.power_count >= 600:
+            self.power_count = 0
+            self.powerup = False
+            self.eaten_gh = [False, False, False, False]
 
-            # if self.start < 120 and self.begin:  # and not end and not won:  #second Before start of the game
-            #     self.moving = False
-            #     self.start += 1
-            # else:
-            self.moving = True
-            if self.end or self.won:
-                self.moving = False
-                self.star = 0
-            self.screen.fill('black')
-            self.draw_board()
+        # if self.start < 120 and self.begin:  # and not end and not won:  #second Before start of the game
+        #     self.moving = False
+        #     self.start += 1
+        # else:
+        self.moving = True
+        if self.end or self.won:
+            self.moving = False
+            self.star = 0
+        self.screen.fill('black')
+        self.draw_board()
 
-            # draw1()
-            # ghost
-            if self.powerup:
-                self.ghost_speed = [1, 1.3, 1, 1.2]
-                if self.red_dead:
-                    self.ghost_speed[0] = 5
-                if self.blue_dead:
-                    self.ghost_speed[1] = 3.5
-                if self.pink_dead:
-                    self.ghost_speed[2] = 3.5
-                if self.or_dead:
-                    self.ghost_speed[3] = 4
-
-            else:
-                self.ghost_speed = [2, 1.9, 1.8, 1.7]
-            if self.eaten_gh[0]:
-                self.ghost_speed[0] = 2.1
-            if self.eaten_gh[1]:
-                self.ghost_speed[1] = 1.9
-            if self.eaten_gh[2]:
-                self.ghost_speed[2] = 1.8
-            if self.eaten_gh[3]:
-                self.ghost_speed[3] = 1.7
+        # draw1()
+        # ghost
+        if self.powerup:
+            self.ghost_speed = [1, 1.3, 1, 1.2]
             if self.red_dead:
                 self.ghost_speed[0] = 5
             if self.blue_dead:
-                self.ghost_speed[1] = 5
+                self.ghost_speed[1] = 3.5
             if self.pink_dead:
-                self.ghost_speed[2] = 5
+                self.ghost_speed[2] = 3.5
             if self.or_dead:
-                self.ghost_speed[3] = 5
-            self.red = Ghost(self.red_x, self.red_y, self.targets[0], self.ghost_speed[0],
-                             self.red_gh, self.red_direct, self.red_dead, self.red_box, 0, self.level, self.num_cells, self.powerup, self.width, self.eaten_gh, self.screen, self.poweredup, self.dead)
-            # inky
-            self.blue = Ghost(self.blue_x, self.blue_y, self.targets[1], self.ghost_speed[1],
-                              self.blue_gh, self.blue_direct, self.blue_dead, self.blue_box, 1, self.level, self.num_cells, self.powerup, self.width, self.eaten_gh, self.screen, self.poweredup, self.dead)
-            # pinky
-            self.pink = Ghost(self.pink_x, self.pink_y, self.targets[2], self.ghost_speed[2],
-                              self.pink_gh, self.pink_direct, self.pink_dead, self.pink_box, 2, self.level, self.num_cells, self.powerup, self.width, self.eaten_gh, self.screen, self.poweredup, self.dead)
-            # clide
-            self.oran = Ghost(self.or_x, self.or_y, self.targets[3], self.ghost_speed[3],
-                              self.or_gh, self.or_direct, self.or_dead, self.or_box, 3, self.level, self.num_cells, self.powerup, self.width, self.eaten_gh, self.screen, self.poweredup, self.dead)
-            self.draw_misc()
-            # draw()
-            self.targets = self.get_targets(self.red_x, self.red_y, self.blue_x, self.blue_y,
-                                            self.pink_x, self.pink_y, self.or_x, self.or_y)
-            self.center_x = self.player_x + self.num_cells/2  # +23
-            self.center_y = self.player_y + self.num_cells/2  # +24
+                self.ghost_speed[3] = 4
 
-            # +2 +1 +1 adapted to picturecould be changed
-            if not self.end and not self.won and self.begin:
-                self.draw_player()
+        else:
+            self.ghost_speed = [2, 1.9, 1.8, 1.7]
+        if self.eaten_gh[0]:
+            self.ghost_speed[0] = 2.1
+        if self.eaten_gh[1]:
+            self.ghost_speed[1] = 1.9
+        if self.eaten_gh[2]:
+            self.ghost_speed[2] = 1.8
+        if self.eaten_gh[3]:
+            self.ghost_speed[3] = 1.7
+        if self.red_dead:
+            self.ghost_speed[0] = 5
+        if self.blue_dead:
+            self.ghost_speed[1] = 5
+        if self.pink_dead:
+            self.ghost_speed[2] = 5
+        if self.or_dead:
+            self.ghost_speed[3] = 5
+        self.red = Ghost(self.red_x, self.red_y, self.targets[0], self.ghost_speed[0],
+                         self.red_gh, self.red_direct, self.red_dead, self.red_box, 0, self.level, self.num_cells, self.powerup, self.width, self.eaten_gh, self.screen, self.poweredup, self.dead)
+        # inky
+        self.blue = Ghost(self.blue_x, self.blue_y, self.targets[1], self.ghost_speed[1],
+                          self.blue_gh, self.blue_direct, self.blue_dead, self.blue_box, 1, self.level, self.num_cells, self.powerup, self.width, self.eaten_gh, self.screen, self.poweredup, self.dead)
+        # pinky
+        self.pink = Ghost(self.pink_x, self.pink_y, self.targets[2], self.ghost_speed[2],
+                          self.pink_gh, self.pink_direct, self.pink_dead, self.pink_box, 2, self.level, self.num_cells, self.powerup, self.width, self.eaten_gh, self.screen, self.poweredup, self.dead)
+        # clide
+        self.oran = Ghost(self.or_x, self.or_y, self.targets[3], self.ghost_speed[3],
+                          self.or_gh, self.or_direct, self.or_dead, self.or_box, 3, self.level, self.num_cells, self.powerup, self.width, self.eaten_gh, self.screen, self.poweredup, self.dead)
+        self.draw_misc()
+        # draw()
+        self.targets = self.get_targets(self.red_x, self.red_y, self.blue_x, self.blue_y,
+                                        self.pink_x, self.pink_y, self.or_x, self.or_y)
+        self.center_x = self.player_x + self.num_cells/2  # +23
+        self.center_y = self.player_y + self.num_cells/2  # +24
 
-            if not self.end and not self.won:
+        # +2 +1 +1 adapted to picturecould be changed
+        if not self.end and not self.won and self.begin:
+            self.draw_player()
 
-                circle = pygame.draw.circle(
-                    self.screen, 'black', (self.center_x+2, self.center_y+1), self.num_cells*1.2/2+1, 2)
+        if not self.end and not self.won:
 
-            self.won = True
-            for i in range(len(self.level)):
-                if 1 in self.level[i] or 2 in self.level[i]:
-                    self.won = False
-            if not self.begin:
-                self.moving = False
+            circle = pygame.draw.circle(
+                self.screen, 'black', (self.center_x+2, self.center_y+1), self.num_cells*1.2/2+1, 2)
 
-            # pygame.draw.circle(screen,'white',(center_x,center_y),2)
+        self.won = True
+        for i in range(len(self.level)):
+            if 1 in self.level[i] or 2 in self.level[i]:
+                self.won = False
+        if not self.begin:
+            self.moving = False
+
+        # pygame.draw.circle(screen,'white',(center_x,center_y),2)
         # move
 
-            self.turns_allowed = self.check_position(
-                self.center_x, self.center_y)
-            if self.moving:
-                if not self.red_dead and not self.red.inbox:
-                    self.red_x, self.red_y, self.red_direct = self.red.move_red()
-                else:
-                    self.red_x, self.red_y, self.red_direct = self.red.move_or()
+        self.turns_allowed = self.check_position(
+            self.center_x, self.center_y)
+        if self.moving:
+            if not self.red_dead and not self.red.inbox:
+                self.red_x, self.red_y, self.red_direct = self.red.move_red()
+            else:
+                self.red_x, self.red_y, self.red_direct = self.red.move_or()
 
-                if not self.blue_dead and not self.blue.inbox:
-                    self.blue_x, self.blue_y, self.blue_direct = self.blue.move_blue()
-                else:
-                    self.blue_x, self.blue_y, self.blue_direct = self.blue.move_or()
+            if not self.blue_dead and not self.blue.inbox:
+                self.blue_x, self.blue_y, self.blue_direct = self.blue.move_blue()
+            else:
+                self.blue_x, self.blue_y, self.blue_direct = self.blue.move_or()
 
-                if not self.pink_dead and not self.pink.inbox:
-                    self.pink_x, self.pink_y, self.pink_direct = self.pink.move_pink()
-                else:
-                    self.pink_x, self.pink_y, self.pink_direct = self.pink.move_or()
+            if not self.pink_dead and not self.pink.inbox:
+                self.pink_x, self.pink_y, self.pink_direct = self.pink.move_pink()
+            else:
+                self.pink_x, self.pink_y, self.pink_direct = self.pink.move_or()
 
-                self.or_x, self.or_y, self.or_direct = self.oran.move_or()
-                self.player_x, self.player_y = self.move_player(
-                    self.player_x, self.player_y)
+            self.or_x, self.or_y, self.or_direct = self.oran.move_or()
+            self.player_x, self.player_y = self.move_player(
+                self.player_x, self.player_y)
 
-            # eat dots
-            self.score, self.powerup, self.power_count, self.eaten_gh = self.check_collisions(
-                self.score, self.powerup, self.power_count, self.eaten_gh)
+        # eat dots
+        self.score, self.powerup, self.power_count, self.eaten_gh = self.check_collisions(
+            self.score, self.powerup, self.power_count, self.eaten_gh)
 
-            if self.powerup and circle.colliderect(self.red.rect) and not self.red.dead and self.eaten_gh[0]:
-                if self.lives > 0:
-                    self.lives -= 1
-                    self.start = 0
-                    self.powerup = False
-                    self.power_counter = 0
-                    # position init
-                    self.player_x = 15*self.num_cells  # position init of pacman
-                    self.player_y = 24*self.num_cells
-                    self.direction = 0
-                    # blinky
-                    self.red_x = 2*self.num_cells
-                    self.red_y = 2*self.num_cells
-                    self.red_direct = 0
-                    # inky
-                    self.blue_x = 14*self.num_cells
-                    self.blue_y = 14*self.num_cells
-                    self.blue_direct = 2
-                    # pinky
-                    self.pink_x = 14*self.num_cells
-                    self.pink_y = 16*self.num_cells
-                    self.pink_direct = 2
-                    # clyde
-                    self.or_x = 14*self.num_cells
-                    self.or_y = 16*self.num_cells
-                    self.or_direct = 2
-                    self.red_dead = False
-                    self.blue_dead = False
-                    self.or_dead = False
-                    self.pink_dead = False
-                    self.eaten_gh = [False, False, False, False]
-                else:
-                    self.end = True
-                    self.moving = False
-                    self.start = 0
-
-            if self.powerup and circle.colliderect(self.blue.rect) and not self.blue.dead and self.eaten_gh[1]:
-                if self.lives > 0:
-                    self.lives -= 1
-                    self.start = 0
-                    self.powerup = False
-                    self.power_counter = 0
-                    # position init
-                    self.player_x = 15*self.num_cells  # position init of pacman
-                    self.player_y = 24*self.num_cells
-                    self.direction = 0
-                    # blinky
-                    self.red_x = 2*self.num_cells
-                    self.red_y = 2*self.num_cells
-                    self.red_direct = 0
-                    # inky
-                    self.blue_x = 14*self.num_cells
-                    self.blue_y = 14*self.num_cells
-                    self.blue_direct = 2
-                    # pinky
-                    self.pink_x = 14*self.num_cells
-                    self.pink_y = 16*self.num_cells
-                    self.pink_direct = 2
-                    # clyde
-                    self.or_x = 14*self.num_cells
-                    self.or_y = 16*self.num_cells
-                    self.or_direct = 2
-                    self.eaten_gh = [False, False, False, False]
-                    self.red_dead = False
-                    self.blue_dead = False
-                    self.or_dead = False
-                    self.pink_dead = False
-                else:
-                    self.end = True
-                    self.moving = False
-                    self.start = 0
-            if self.powerup and circle.colliderect(self.pink.rect) and not self.pink.dead and self.eaten_gh[2]:
-                if self.lives > 0:
-                    self.lives -= 1
-                    self.start = 0
-                    self.powerup = False
-                    self.power_counter = 0
-                    # position init
-                    self.player_x = 15*self.num_cells  # position init of pacman
-                    self.player_y = 24*self.num_cells
-                    self.direction = 0
-                    # blinky
-                    self.red_x = 2*self.num_cells
-                    self.red_y = 2*self.num_cells
-                    self.red_direct = 0
-                    # inky
-                    self.blue_x = 14*self.num_cells
-                    self.blue_y = 14*self.num_cells
-                    self.blue_direct = 2
-                    # pinky
-                    self.pink_x = 14*self.num_cells
-                    self.pink_y = 16*self.num_cells
-                    self.pink_direct = 2
-                    # clyde
-                    self.or_x = 14*self.num_cells
-                    self.or_y = 16*self.num_cells
-                    self.or_direct = 2
-                    self.red_dead = False
-                    self.blue_dead = False
-                    self.or_dead = False
-                    self.pink_dead = False
-                    self.eaten_gh = [False, False, False, False]
-                else:
-                    self.end = True
-                    self.moving = False
-                    self.start = 0
-            if self.powerup and circle.colliderect(self.oran.rect) and not self.oran.dead and self.eaten_gh[3]:
-                if self.lives > 0:
-                    self.lives -= 1
-                    self.start = 0
-                    self.powerup = False
-                    self.power_counter = 0
-                    # position init
-                    self.player_x = 15*self.num_cells  # position init of pacman
-                    self.player_y = 24*self.num_cells
-                    self.direction = 0
-                    # blinky
-                    self.red_x = 2*self.num_cells
-                    self.red_y = 2*self.num_cells
-                    self.red_direct = 0
-                    # inky
-                    self.blue_x = 14*self.num_cells
-                    self.blue_y = 14*self.num_cells
-                    self.blue_direct = 2
-                    # pinky
-                    self.pink_x = 14*self.num_cells
-                    self.pink_y = 16*self.num_cells
-                    self.pink_direct = 2
-                    # clyde
-                    self.or_x = 14*self.num_cells
-                    self.or_y = 16*self.num_cells
-                    self.or_direct = 2
-                    self.red_dead = False
-                    self.blue_dead = False
-                    self.or_dead = False
-                    self.pink_dead = False
-                    self.eaten_gh = [False, False, False, False]
-                else:
-                    self.end = True
-                    self.moving = False
-                    self.start = 0
-
-            if self.powerup and circle.colliderect(self.red.rect) and not self.red.dead and not self.eaten_gh[0]:
-                self.red_dead = True
-                self.eaten_gh[0] = True
-                self.score += (2 ** self.eaten_gh.count(True))*100
-            if self.powerup and circle.colliderect(self.blue.rect) and not self.blue.dead and not self.eaten_gh[1]:
-                self.blue_dead = True
-                self.eaten_gh[1] = True
-                self.score += (2 ** self.eaten_gh.count(True)) * 100
-            if self.powerup and circle.colliderect(self.pink.rect) and not self.pink.dead and not self.eaten_gh[2]:
-                self.pink_dead = True
-                self.eaten_gh[2] = True
-                self.score += (2 ** self.eaten_gh.count(True))*100
-
-            if self.powerup and circle.colliderect(self.oran.rect) and not self.oran.dead and not self.eaten_gh[3]:
-                self.or_dead = True
-                self.eaten_gh[3] = True
-                self.score += (2 ** self.eaten_gh.count(True)) * 100
-
-            if not self.powerup:
-                if (circle.colliderect(self.red.rect) and not self.red.dead) or (circle.colliderect(self.blue.rect) and not self.blue.dead) or (circle.colliderect(self.pink.rect) and not self.pink.dead) or (circle.colliderect(self.oran.rect) and not self.oran.dead):
-                    if self.lives > 0:
-                        self.lives -= 1
-                        self.start = 0
-                        self.powerup = False
-                        self.power_counter = 0
-                        # position init
-                        self.player_x = 15*self.num_cells  # position init of pacman
-                        self.player_y = 24*self.num_cells
-                        self.direction = 0
-                        # blinky
-                        self.red_x = 2*self.num_cells
-                        self.red_y = 2*self.num_cells
-                        self.red_direct = 0
-                        # inky
-                        self.blue_x = 14*self.num_cells
-                        self.blue_y = 14*self.num_cells
-                        self.blue_direct = 2
-                        # pinky
-                        self.pink_x = 14*self.num_cells
-                        self.pink_y = 16*self.num_cells
-                        self.pink_direct = 2
-                        # clyde
-                        self.or_x = 14*self.num_cells
-                        self.or_y = 16*self.num_cells
-                        self.or_direct = 2
-                        self.red_dead = False
-                        self.blue_dead = False
-                        self.or_dead = False
-                        self.pink_dead = False
-                        self.eaten_gh = [False, False, False, False]
-                    else:
-                        self.end = True
-                        self.moving = False
-                        self.start = 0
-
-            if self.red.inbox and self.red_dead:
+        if self.powerup and circle.colliderect(self.red.rect) and not self.red.dead and self.eaten_gh[0]:
+            if self.lives > 0:
+                self.lives -= 1
+                self.start = 0
+                self.powerup = False
+                self.power_counter = 0
+                # position init
+                self.player_x = 15*self.num_cells  # position init of pacman
+                self.player_y = 24*self.num_cells
+                self.direction = 0
+                # blinky
+                self.red_x = 2*self.num_cells
+                self.red_y = 2*self.num_cells
+                self.red_direct = 0
+                # inky
+                self.blue_x = 14*self.num_cells
+                self.blue_y = 14*self.num_cells
+                self.blue_direct = 2
+                # pinky
+                self.pink_x = 14*self.num_cells
+                self.pink_y = 16*self.num_cells
+                self.pink_direct = 2
+                # clyde
+                self.or_x = 14*self.num_cells
+                self.or_y = 16*self.num_cells
+                self.or_direct = 2
                 self.red_dead = False
-            if self.blue.inbox and self.blue_dead:
                 self.blue_dead = False
-            if self.pink.inbox and self.pink_dead:
-                self.pink_dead = False
-            if self.oran.inbox and self.or_dead:
                 self.or_dead = False
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.run = False
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE and not self.begin:
-                        self.begin = True
-                    if event.key == pygame.K_SPACE and (self.end or self.won):
+                self.pink_dead = False
+                self.eaten_gh = [False, False, False, False]
+            else:
+                self.end = True
+                self.moving = False
+                self.start = 0
 
-                        self.start = 0
-                        self.powerup = False
-                        self.power_counter = 0
-                        # position init
-                        self.player_x = 15*self.num_cells  # position init of pacman
-                        self.player_y = 24*self.num_cells
-                        self.direction = 0
-                        # blinky
-                        self.red_x = 2*self.num_cells
-                        self.red_y = 2*self.num_cells
-                        self.red_direct = 0
-                        # inky
-                        self.blue_x = 14*self.num_cells
-                        self.blue_y = 14*self.num_cells
-                        self.blue_direct = 2
-                        # pinky
-                        self.pink_x = 14*self.num_cells
-                        self.pink_y = 16*self.num_cells
-                        self.pink_direct = 2
-                        # clyde
-                        self.or_x = 14*self.num_cells
-                        self.or_y = 16*self.num_cells
-                        self.or_direct = 2
-                        self.red_dead = False
-                        self.blue_dead = False
-                        self.or_dead = False
-                        self.pink_dead = False
-                        self.eaten_gh = [False, False, False, False]
-                        self.score = 0
-                        self.lives = 3
-                        self.end = False
-                        self.won = False
-                        # begin=False
-                        self.level = copy.deepcopy(boards)
-                    if event.key == pygame.K_RIGHT:
-                        self.direction_command = 0
-                    if event.key == pygame.K_LEFT:
-                        self.direction_command = 1
-                    if event.key == pygame.K_UP:
-                        self.direction_command = 2
-                    if event.key == pygame.K_DOWN:
-                        self.direction_command = 3
+        if self.powerup and circle.colliderect(self.blue.rect) and not self.blue.dead and self.eaten_gh[1]:
+            if self.lives > 0:
+                self.lives -= 1
+                self.start = 0
+                self.powerup = False
+                self.power_counter = 0
+                # position init
+                self.player_x = 15*self.num_cells  # position init of pacman
+                self.player_y = 24*self.num_cells
+                self.direction = 0
+                # blinky
+                self.red_x = 2*self.num_cells
+                self.red_y = 2*self.num_cells
+                self.red_direct = 0
+                # inky
+                self.blue_x = 14*self.num_cells
+                self.blue_y = 14*self.num_cells
+                self.blue_direct = 2
+                # pinky
+                self.pink_x = 14*self.num_cells
+                self.pink_y = 16*self.num_cells
+                self.pink_direct = 2
+                # clyde
+                self.or_x = 14*self.num_cells
+                self.or_y = 16*self.num_cells
+                self.or_direct = 2
+                self.eaten_gh = [False, False, False, False]
+                self.red_dead = False
+                self.blue_dead = False
+                self.or_dead = False
+                self.pink_dead = False
+            else:
+                self.end = True
+                self.moving = False
+                self.start = 0
+        if self.powerup and circle.colliderect(self.pink.rect) and not self.pink.dead and self.eaten_gh[2]:
+            if self.lives > 0:
+                self.lives -= 1
+                self.start = 0
+                self.powerup = False
+                self.power_counter = 0
+                # position init
+                self.player_x = 15*self.num_cells  # position init of pacman
+                self.player_y = 24*self.num_cells
+                self.direction = 0
+                # blinky
+                self.red_x = 2*self.num_cells
+                self.red_y = 2*self.num_cells
+                self.red_direct = 0
+                # inky
+                self.blue_x = 14*self.num_cells
+                self.blue_y = 14*self.num_cells
+                self.blue_direct = 2
+                # pinky
+                self.pink_x = 14*self.num_cells
+                self.pink_y = 16*self.num_cells
+                self.pink_direct = 2
+                # clyde
+                self.or_x = 14*self.num_cells
+                self.or_y = 16*self.num_cells
+                self.or_direct = 2
+                self.red_dead = False
+                self.blue_dead = False
+                self.or_dead = False
+                self.pink_dead = False
+                self.eaten_gh = [False, False, False, False]
+            else:
+                self.end = True
+                self.moving = False
+                self.start = 0
+        if self.powerup and circle.colliderect(self.oran.rect) and not self.oran.dead and self.eaten_gh[3]:
+            if self.lives > 0:
+                self.lives -= 1
+                self.start = 0
+                self.powerup = False
+                self.power_counter = 0
+                # position init
+                self.player_x = 15*self.num_cells  # position init of pacman
+                self.player_y = 24*self.num_cells
+                self.direction = 0
+                # blinky
+                self.red_x = 2*self.num_cells
+                self.red_y = 2*self.num_cells
+                self.red_direct = 0
+                # inky
+                self.blue_x = 14*self.num_cells
+                self.blue_y = 14*self.num_cells
+                self.blue_direct = 2
+                # pinky
+                self.pink_x = 14*self.num_cells
+                self.pink_y = 16*self.num_cells
+                self.pink_direct = 2
+                # clyde
+                self.or_x = 14*self.num_cells
+                self.or_y = 16*self.num_cells
+                self.or_direct = 2
+                self.red_dead = False
+                self.blue_dead = False
+                self.or_dead = False
+                self.pink_dead = False
+                self.eaten_gh = [False, False, False, False]
+            else:
+                self.end = True
+                self.moving = False
+                self.start = 0
 
-                if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_RIGHT and self.direction_command == 0:
-                        self.direction_command = self.direction
-                    if event.key == pygame.K_LEFT and self.direction_command == 0:
-                        self.direction_command = self.direction
-                    if event.key == pygame.K_UP and self.direction_command == 0:
-                        self.direction_command = self.direction
-                    if event.key == pygame.K_DOWN and self.direction_command == 0:
-                        self.direction_command = self.direction
-            for i in range(4):
-                if self.direction_command == i and self.turns_allowed[i]:
-                    self.direction = i
+        if self.powerup and circle.colliderect(self.red.rect) and not self.red.dead and not self.eaten_gh[0]:
+            self.red_dead = True
+            self.eaten_gh[0] = True
+            self.score += (2 ** self.eaten_gh.count(True))*100
+        if self.powerup and circle.colliderect(self.blue.rect) and not self.blue.dead and not self.eaten_gh[1]:
+            self.blue_dead = True
+            self.eaten_gh[1] = True
+            self.score += (2 ** self.eaten_gh.count(True)) * 100
+        if self.powerup and circle.colliderect(self.pink.rect) and not self.pink.dead and not self.eaten_gh[2]:
+            self.pink_dead = True
+            self.eaten_gh[2] = True
+            self.score += (2 ** self.eaten_gh.count(True))*100
 
-            if self.player_x > self.width:  # ghost can not move from right to left
+        if self.powerup and circle.colliderect(self.oran.rect) and not self.oran.dead and not self.eaten_gh[3]:
+            self.or_dead = True
+            self.eaten_gh[3] = True
+            self.score += (2 ** self.eaten_gh.count(True)) * 100
 
-                self.player_x = -5
-            elif self.player_x < -5:
-                self.player_x = self.width-3
-            pygame.display.flip()
+        if not self.powerup:
+            if (circle.colliderect(self.red.rect) and not self.red.dead) or (circle.colliderect(self.blue.rect) and not self.blue.dead) or (circle.colliderect(self.pink.rect) and not self.pink.dead) or (circle.colliderect(self.oran.rect) and not self.oran.dead):
+                if self.lives > 0:
+                    self.lives -= 1
+                    self.start = 0
+                    self.powerup = False
+                    self.power_counter = 0
+                    # position init
+                    self.player_x = 15*self.num_cells  # position init of pacman
+                    self.player_y = 24*self.num_cells
+                    self.direction = 0
+                    # blinky
+                    self.red_x = 2*self.num_cells
+                    self.red_y = 2*self.num_cells
+                    self.red_direct = 0
+                    # inky
+                    self.blue_x = 14*self.num_cells
+                    self.blue_y = 14*self.num_cells
+                    self.blue_direct = 2
+                    # pinky
+                    self.pink_x = 14*self.num_cells
+                    self.pink_y = 16*self.num_cells
+                    self.pink_direct = 2
+                    # clyde
+                    self.or_x = 14*self.num_cells
+                    self.or_y = 16*self.num_cells
+                    self.or_direct = 2
+                    self.red_dead = False
+                    self.blue_dead = False
+                    self.or_dead = False
+                    self.pink_dead = False
+                    self.eaten_gh = [False, False, False, False]
+                else:
+                    self.end = True
+                    self.moving = False
+                    self.start = 0
+
+        if self.red.inbox and self.red_dead:
+            self.red_dead = False
+        if self.blue.inbox and self.blue_dead:
+            self.blue_dead = False
+        if self.pink.inbox and self.pink_dead:
+            self.pink_dead = False
+        if self.oran.inbox and self.or_dead:
+            self.or_dead = False
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.run = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE and not self.begin:
+                    self.begin = True
+                if event.key == pygame.K_SPACE and (self.end or self.won):
+
+                    self.start = 0
+                    self.powerup = False
+                    self.power_counter = 0
+                    # position init
+                    self.player_x = 15*self.num_cells  # position init of pacman
+                    self.player_y = 24*self.num_cells
+                    self.direction = 0
+                    # blinky
+                    self.red_x = 2*self.num_cells
+                    self.red_y = 2*self.num_cells
+                    self.red_direct = 0
+                    # inky
+                    self.blue_x = 14*self.num_cells
+                    self.blue_y = 14*self.num_cells
+                    self.blue_direct = 2
+                    # pinky
+                    self.pink_x = 14*self.num_cells
+                    self.pink_y = 16*self.num_cells
+                    self.pink_direct = 2
+                    # clyde
+                    self.or_x = 14*self.num_cells
+                    self.or_y = 16*self.num_cells
+                    self.or_direct = 2
+                    self.red_dead = False
+                    self.blue_dead = False
+                    self.or_dead = False
+                    self.pink_dead = False
+                    self.eaten_gh = [False, False, False, False]
+                    self.score = 0
+                    self.lives = 3
+                    self.end = False
+                    self.won = False
+                    # begin=False
+                    self.level = copy.deepcopy(boards)
+                if event.key == pygame.K_RIGHT:
+                    self.direction_command = 0
+                if event.key == pygame.K_LEFT:
+                    self.direction_command = 1
+                if event.key == pygame.K_UP:
+                    self.direction_command = 2
+                if event.key == pygame.K_DOWN:
+                    self.direction_command = 3
+
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_RIGHT and self.direction_command == 0:
+                    self.direction_command = self.direction
+                if event.key == pygame.K_LEFT and self.direction_command == 0:
+                    self.direction_command = self.direction
+                if event.key == pygame.K_UP and self.direction_command == 0:
+                    self.direction_command = self.direction
+                if event.key == pygame.K_DOWN and self.direction_command == 0:
+                    self.direction_command = self.direction
+        for i in range(4):
+            if self.direction_command == i and self.turns_allowed[i]:
+                self.direction = i
+
+        if self.player_x > self.width:  # ghost can not move from right to left
+
+            self.player_x = -5
+        elif self.player_x < -5:
+            self.player_x = self.width-3
+        pygame.display.flip()
+        return (None, None, self.end, self.lives)
+
+    def restart(self):
+        self.start = 0
+        self.powerup = False
+        self.power_counter = 0
+        # position init
+        self.player_x = 15*self.num_cells  # position init of pacman
+        self.player_y = 24*self.num_cells
+        self.direction = 0
+        # blinky
+        self.red_x = 2*self.num_cells
+        self.red_y = 2*self.num_cells
+        self.red_direct = 0
+        # inky
+        self.blue_x = 14*self.num_cells
+        self.blue_y = 14*self.num_cells
+        self.blue_direct = 2
+        # pinky
+        self.pink_x = 14*self.num_cells
+        self.pink_y = 16*self.num_cells
+        self.pink_direct = 2
+        # clyde
+        self.or_x = 14*self.num_cells
+        self.or_y = 16*self.num_cells
+        self.or_direct = 2
+        self.red_dead = False
+        self.blue_dead = False
+        self.or_dead = False
+        self.pink_dead = False
+        self.eaten_gh = [False, False, False, False]
+        self.score = 0
+        self.lives = 1
+        self.end = False
+        self.won = False
+        # begin=False
+        self.level = copy.deepcopy(boards)
 
     def perform_action(self, action):
+        if self.end:
+            self.restart()
         self.clock.tick(self.frame_per_second)
         if self.counter < 19:  # spped of eating my pacman
             self.counter += 1
@@ -1215,8 +1256,19 @@ class GameController:
         elif self.player_x < -5:
             self.player_x = self.width-3
         pygame.display.flip()
-        state = np.zeros((22, 18))
-        return (state, self.score, False, self.lives)
+        state = self.get_state()
+        return (state, self.score, self.end, self.lives)
+
+    def get_state(self):
+        state = np.array(self.level)
+        state = np.zeros(state.shape)
+        for i in range(len(self.level)):
+            for j in range(len(self.level[0])):
+                if self.level[i][j] == 1:
+                    state[i, j] = 1
+                if self.level[i][j] == 2:
+                    state[i, j] = 2
+        return state
 
 
 if __name__ == '__main__':

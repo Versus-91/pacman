@@ -24,7 +24,7 @@ class GameWrapper:
         self.controller.perform_action(0)
 
     def restart(self):
-        self.controller.restartGame()
+        self.controller.restart()
 
     def step(self, action):
         assert action >= 0 and action < 4
@@ -46,7 +46,7 @@ class GameWrapper:
         return self.controller.pacman.position
 
     def update(self):
-        self.controller.update()
+        return self.controller.update()
 
     def process_image(self, obs):
         # image = cv2.cvtColor(obs, cv2.COLOR_BGR2GRAY)

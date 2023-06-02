@@ -82,8 +82,8 @@ class LearningAgent:
         self.replay_size = 6 * 15000
         self.learning_rate = 2.5e-4
         self.steps = 0
-        self.target = DQN(22 * 18, N_ACTIONS).to(device)
-        self.policy = DQN(22 * 18, N_ACTIONS).to(device)
+        self.target = DQN(33 * 30, N_ACTIONS).to(device)
+        self.policy = DQN(33 * 30, N_ACTIONS).to(device)
         self.memory = ExperienceReplay(18000)
         self.game = GameWrapper()
         self.last_action = 0
@@ -119,7 +119,7 @@ class LearningAgent:
         loss = criterion(predicted_targets,
                          labels.detach().unsqueeze(1)).to(device)
         # display.data.losses.append(loss.item())
-        print("loss", loss.item())
+        # print("loss", loss.item())
         self.optimizer.zero_grad()
         loss.backward()
         for param in self.policy.parameters():
@@ -207,7 +207,7 @@ class LearningAgent:
                     self.target.load_state_dict(self.policy.state_dict())
                 start_time = time.time()
             else:
-                self.game.update()
+                _, _, done, remaining_lives = self.game.update()
             if done:
                 assert reward_sum == reward
                 self.rewards.append(reward_sum)
