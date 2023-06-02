@@ -34,7 +34,7 @@ class Ghost:
             self.screen.blit(self.dead_image, (self.x, self.y))
 
         ghos_rect = pygame.rect.Rect(
-            (self.centerx-self.cell//2, self.centery-self.cell//2), (self.cell, self.cell))
+            (self.centerx-self.cell//3, self.centery-self.cell//3), (self.cell, self.cell))
         return ghos_rect
 
     def check_collision(self):
