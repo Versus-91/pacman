@@ -810,7 +810,7 @@ class GameController:
         elif self.player_x < -5:
             self.player_x = self.width-3
         pygame.display.flip()
-        return (None, None, self.end, self.lives)
+        return (None, None, self.end, self.lives, None)
 
     def restart(self):
         self.start = 0
@@ -842,7 +842,7 @@ class GameController:
         self.pink_dead = False
         self.eaten_gh = [False, False, False, False]
         self.score = 0
-        self.lives = 1
+        self.lives = 3
         self.end = False
         self.won = False
         # begin=False
@@ -1247,6 +1247,10 @@ class GameController:
                     self.direction_command = self.direction
             self.direction_command = action
             # self.direction = dircetion
+        is_valide_move = True
+        if self.turns_allowed[self.direction_command] == False:
+            is_valide_move = False
+
         for i in range(4):
             if self.direction_command == i and self.turns_allowed[i]:
                 self.direction = i
@@ -1257,7 +1261,7 @@ class GameController:
             self.player_x = self.width-3
         pygame.display.flip()
         state = self.get_state()
-        return (state, self.score, self.end, self.lives)
+        return (state, self.score, self.end, self.lives, is_valide_move)
 
     def get_state(self):
         state = np.array(self.level)

@@ -152,7 +152,7 @@ class LearningAgent:
         plt.figure(1)
         durations_t = torch.tensor(self.rewards, dtype=torch.float)
         plt.xlabel('Episode')
-        plt.ylabel('Duration')
+        plt.ylabel('Reward')
         plt.plot(durations_t.numpy())
         if len(durations_t) >= 100:
             means = durations_t.unfold(0, 100, 1).mean(1).view(-1)
@@ -168,7 +168,7 @@ class LearningAgent:
         start_time = time.time()
         self.episode += 1
         lives = 3
-        obs, reward, done, info = self.game.step(2)
+        obs, reward, done, info, _ = self.game.step(2)
         obs = obs.flatten().astype(dtype=np.float32)
         state = torch.from_numpy(obs).unsqueeze(0).to(device)
         reward_sum = 0
@@ -179,8 +179,12 @@ class LearningAgent:
             if elapsed_time >= action_interval:
                 action = self.select_action(state)
                 action_t = action.item()
-                obs, reward, done, remaining_lives = self.game.step(action_t)
+                obs, reward, done, remaining_lives, is_valid_move = self.game.step(
+                    action_t)
+
                 reward_ = reward - last_score
+                if is_valid_move == False:
+                    reward_ = -10
                 if reward_ >= 200:
                     reward_ = 20
                 if last_score < reward:
@@ -191,7 +195,7 @@ class LearningAgent:
                     lives -= 1
                     reward_ = -10
                 if reward_ == last_score:
-                    reward_ = -0.2
+                    reward_ += -0.2
                 observation = obs.flatten().astype(dtype=np.float32)
                 next_state = torch.from_numpy(
                     observation).unsqueeze(0).to(device)
@@ -207,7 +211,7 @@ class LearningAgent:
                     self.target.load_state_dict(self.policy.state_dict())
                 start_time = time.time()
             else:
-                _, _, done, remaining_lives = self.game.update()
+                _, _, done, remaining_lives, _ = self.game.update()
             if done:
                 assert reward_sum == reward
                 self.rewards.append(reward_sum)
