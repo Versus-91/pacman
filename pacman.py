@@ -1270,8 +1270,10 @@ class GameController:
             for j in range(len(self.level[0])):
                 if self.level[i][j] == 1:
                     state[i, j] = 1
-                if self.level[i][j] == 2:
+                elif self.level[i][j] == 2:
                     state[i, j] = 2
+                elif self.level[i][j] == 4 or self.level[i][j] == 5 or self.level[i][j] == 6 or self.level[i][j] == 3 or self.level[i][j] == 4 or self.level[i][j] == 7 or self.level[i][j] == 8:
+                    state[i, j] = -1
         return state
 
 
