@@ -1274,7 +1274,8 @@ class GameController:
                     state[i, j] = 2
                 elif self.level[i][j] == 4 or self.level[i][j] == 5 or self.level[i][j] == 6 or self.level[i][j] == 3 or self.level[i][j] == 4 or self.level[i][j] == 7 or self.level[i][j] == 8:
                     state[i, j] = -1
-        return state
+        states = [state, np.zeros(state.shape)]
+        return states
 
 
 if __name__ == '__main__':
