@@ -5,14 +5,6 @@ import numpy as np
 import pygame
 from constants import *
 from pacman import GameController
-import matplotlib.pyplot as plt
-import torchvision.transforms as transforms
-from PIL import Image
-
-left = pygame.event.Event(pygame.USEREVENT, attr1='left')
-right = pygame.event.Event(pygame.USEREVENT, attr1='right')
-up = pygame.event.Event(pygame.USEREVENT, attr1='up')
-down = pygame.event.Event(pygame.USEREVENT, attr1='down')
 
 
 class GameWrapper:
@@ -21,25 +13,15 @@ class GameWrapper:
         self.action = UP
 
     def start(self):
-        self.controller.perform_action(0)
+        self.controller.step(0)
 
     def restart(self):
         self.controller.restart()
 
     def step(self, action):
-        assert action >= 0 and action < 4
-        if action == 0:
-            event = up
-        elif action == 1:
-            event = down
-        elif action == 2:
-            event = left
-        elif action == 3:
-            event = right
-        else:
-            print("Invalid action", action)
-        pygame.event.post(event)
-        data = self.controller.perform_action(action)
+        if action != None:
+            assert (action >= 0 and action < 4)
+        data = self.controller.step(action)
         return (data[0], data[1], data[2], data[3], data[4])
 
     def pacman_position(self):

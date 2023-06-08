@@ -164,54 +164,53 @@ class LearningAgent:
 
     def train(self):
         obs = self.game.start()
-        action_interval = 0.02
+        action_interval = 0.015
         start_time = time.time()
         self.episode += 1
         lives = 3
         obs, reward, done, info, _ = self.game.step(2)
-        obs = obs.flatten().astype(dtype=np.float32)
+        obs = obs[0].flatten().astype(dtype=np.float32)
         state = torch.from_numpy(obs).unsqueeze(0).to(device)
         reward_sum = 0
         last_score = 0
         while True:
-            current_time = time.time()
-            elapsed_time = current_time - start_time
-            if elapsed_time >= action_interval:
-                action = self.select_action(state)
-                action_t = action.item()
-                obs, reward, done, remaining_lives, is_valid_move = self.game.step(
-                    action_t)
-
-                reward_ = reward - last_score
-                if is_valid_move == False:
-                    reward_ = -10
-                if reward_ >= 200:
-                    reward_ = 20
-                if last_score < reward:
-                    reward_sum += reward - last_score
-                self.last_action = action_t
-                last_score = reward
-                if remaining_lives < lives:
-                    lives -= 1
-                    reward_ = -10
-                if reward_ == last_score:
-                    reward_ += -0.2
-                observation = obs.flatten().astype(dtype=np.float32)
-                next_state = torch.from_numpy(
-                    observation).unsqueeze(0).to(device)
-                action_tensor = torch.tensor(
-                    [[action_t]], device=device, dtype=torch.long)
-                self.memory.append(state, action_tensor,
-                                   torch.tensor([reward_], device=device), next_state, done)
-
-                state = next_state
-                if self.steps % 2 == 0:
-                    self.optimize_model()
-                if self.steps % TARGET_UPDATE == 0:
-                    self.target.load_state_dict(self.policy.state_dict())
-                start_time = time.time()
-            else:
-                _, _, done, remaining_lives, _ = self.game.update()
+            # current_time = time.time()
+            # elapsed_time = current_time - start_time
+            # if elapsed_time >= action_interval:
+            action = self.select_action(state)
+            action_t = action.item()
+            obs, reward, done, remaining_lives, is_valid_move = self.game.step(
+                action_t)
+            reward_ = reward - last_score
+            if is_valid_move == False:
+                reward_ = -1
+            if reward_ >= 200:
+                reward_ = 20
+            if last_score < reward:
+                reward_sum += reward - last_score
+            self.last_action = action_t
+            last_score = reward
+            if remaining_lives < lives:
+                lives -= 1
+                reward_ = -10
+            if reward_ == last_score:
+                reward_ += -0.2
+            print("action :", action_t, "reward :", reward_)
+            observation = obs[0].flatten().astype(dtype=np.float32)
+            next_state = torch.from_numpy(
+                observation).unsqueeze(0).to(device)
+            action_tensor = torch.tensor(
+                [[action_t]], device=device, dtype=torch.long)
+            self.memory.append(state, action_tensor,
+                               torch.tensor([reward_], device=device), next_state, done)
+            state = next_state
+            if self.steps % 2 == 0:
+                self.optimize_model()
+            if self.steps % TARGET_UPDATE == 0:
+                self.target.load_state_dict(self.policy.state_dict())
+            # start_time = time.time()
+            # else:
+            #     _, _, done, remaining_lives, _ = self.game.update()
             if done:
                 assert reward_sum == reward
                 self.rewards.append(reward_sum)
