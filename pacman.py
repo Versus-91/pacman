@@ -200,13 +200,13 @@ class GameController:
         pacman[int((self.player_y+self.mid_cells)//self.num_cells)
                ][int((self.player_x+self.mid_cells)//self.num_cells)] = 1
 
-        for i in range(len(level)):
-            for j in range(len(level[i])):
-                if level[i][j] == 1:
+        for i in range(len(self.level)):
+            for j in range(len(self.level[i])):
+                if self.level[i][j] == 1:
                     dots[i][j] = 1  # means dot
-                if level[i][j] == 2:
+                if self.level[i][j] == 2:
                     dots[i][j] = 2  # means powerup
-                if 2 < level[i][j] < 10:
+                if 2 < self.level[i][j] < 10:
                     walls[i][j] = 1  # wall
         x = int((self.player_y+self.mid_cells)//self.num_cells)
         y = int((self.player_x+self.mid_cells)//self.num_cells)
@@ -484,7 +484,6 @@ class GameController:
             # draw1()
             # ghost
             # self.hate_f_gh()
-            wall, dot, gh, froz_gh, pacman = self.get_states()
             # if self.moving:
             #     print(pacman)
 
@@ -762,7 +761,45 @@ class GameController:
         pygame.quit()
         quit()
 
+    def restart(self):
+        self.start = 0
+        self.powerup = False
+        self.power_counter = 0
+        # position init
+        self.player_x = 11*self.num_cells  # position init of pacman
+        self.player_y = 8*self.num_cells
+        self.direction = 0
+        # blinky
+        self.red_x = 1*self.num_cells
+        self.red_y = 1*self.num_cells
+        self.red_direct = 0
+        # inky
+        self.blue_x = 12*self.num_cells
+        self.blue_y = 6*self.num_cells
+        self.blue_direct = 2
+        # pinky
+        self.pink_x = 14*self.num_cells
+        self.pink_y = 16*self.num_cells
+        self.pink_direct = 2
+        # clyde
+        self.or_x = 12*self.num_cells
+        self.or_y = 6*self.num_cells
+        self.or_direct = 2
+        self.red_dead = False
+        self.blue_dead = False
+        self.or_dead = False
+        self.pink_dead = False
+        self.eaten_gh = [False, False, False, False]
+        self.score = 0
+        self.lives = 3
+        self.end = False
+        self.won = False
+        # begin=False
+        self.level = copy.deepcopy(level_init)
+
     def step(self, action=None):
+        if self.end or self.lives == 0:
+            self.restart()
         self.clock.tick(self.frame_per_second)
         if self.counter < 19:  # spped of eating my pacman
             self.counter += 1
@@ -771,7 +808,7 @@ class GameController:
         else:
             self.counter = 0
             self.flicker = True
-
+        collided = False
         if self.powerup and self.power_count < 600:
             self.power_count += 1
         elif self.powerup and self.power_count >= 600:
@@ -779,11 +816,12 @@ class GameController:
             self.powerup = False
             self.eaten_gh = [False, False, False, False]
 
-        if self.start < 120:  # and not end and not won:  #second Before start of the game
-            self.moving = False
-            self.start += 1
-        else:
-            self.moving = True
+        # if self.start < 120:  # and not end and not won:  #second Before start of the game
+        #     self.moving = False
+        #     self.start += 1
+        # else:
+        #     self.moving = True
+        self.moving = True
         if self.end or self.won:
             self.moving = False
             self.star = 0
@@ -878,6 +916,7 @@ class GameController:
 
         if self.powerup and circle.colliderect(self.red.rect) and not self.red.dead and self.eaten_gh[0]:
             if self.lives > 0:
+                collided = True
                 self.lives -= 1
                 self.start = 0
                 self.powerup = False
@@ -914,6 +953,7 @@ class GameController:
 
         if self.powerup and circle.colliderect(self.blue.rect) and not self.blue.dead and self.eaten_gh[1]:
             if self.lives > 0:
+                collided = True
                 self.lives -= 1
                 self.start = 0
                 self.powerup = False
@@ -960,6 +1000,7 @@ class GameController:
         if not self.powerup:
             if (circle.colliderect(self.red.rect) and not self.red.dead) or (circle.colliderect(self.blue.rect) and not self.blue.dead):
                 if self.lives > 0:
+                    collided = True
                     self.lives -= 1
                     self.start = 0
                     self.powerup = False
@@ -1066,7 +1107,10 @@ class GameController:
         elif self.player_x < -5:
             self.player_x = self.width-3
         pygame.display.flip()
-        return (self.get_states(), self.score, self.end, self.lives,  self.turns_allowed[i])
+        state = self.get_states()
+        if self.lives == 0:
+            self.end = True
+        return (state, self.score, self.end, self.lives,  self.turns_allowed[i], collided)
 
 
 if __name__ == '__main__':

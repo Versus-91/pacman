@@ -11,6 +11,7 @@ class GameWrapper:
     def __init__(self):
         self.controller = GameController()
         self.action = UP
+        self.i = 0
 
     def start(self):
         self.controller.step(0)
@@ -22,7 +23,7 @@ class GameWrapper:
         if action != None:
             assert (action >= 0 and action < 4)
         data = self.controller.step(action)
-        return (data[0], data[1], data[2], data[3], data[4])
+        return (data[0], data[1], data[2], data[3], data[4], data[5])
 
     def pacman_position(self):
         return self.controller.pacman.position
