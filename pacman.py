@@ -9,6 +9,7 @@ from ghost3 import Ghost
 # 0 = empty black rectangle, 1 = dot, 2 = big dot, 3 = vertical line,
 # 4 = horizontal line, 5 = top right, 6 = top left, 7 = bot left, 8 = bot right
 # 9 = gate
+
 level_init = [[6, 4, 4, 4, 4, 4, 4, 5, 6, 4, 4, 4, 4, 4, 4, 4, 4, 5, 6, 4, 4, 4, 4, 4, 4, 5],
               [3, 2, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1, 1, 1,
                   1, 1, 1, 3, 3, 1, 1, 1, 1, 1, 1, 3],
@@ -104,8 +105,8 @@ class GameController:
         self.player_y = 8 * self.num_cells
         self.direction = 0
         # blinky
-        self.red_x = 1*self.num_cells
-        self.red_y = 1*self.num_cells
+        self.red_x = 1*self.num_cells * 0.8
+        self.red_y = 1*self.num_cells * 0.8
         self.red_direct = 0
         # inky
         self.blue_x = 12*self.num_cells
@@ -174,6 +175,18 @@ class GameController:
 
     def hate_f_gh(self):
         print(self.blue.x//22, self.blue.y//22)
+
+    def get_action_name(self, action):
+        match action:
+            case 0:
+                return "right"
+            case 1:
+                return "left"
+            case 2:
+                return "up"
+            case 3:
+                return "down"
+        pass
 
     def get_states(self):
 
@@ -913,7 +926,7 @@ class GameController:
         # eat dots
         self.score, self.powerup, self.power_count, self.eaten_gh = self.check_collisions(
             self.score, self.powerup, self.power_count, self.eaten_gh)
-
+        state = self.get_states()
         if self.powerup and circle.colliderect(self.red.rect) and not self.red.dead and self.eaten_gh[0]:
             if self.lives > 0:
                 collided = True
@@ -1107,10 +1120,14 @@ class GameController:
         elif self.player_x < -5:
             self.player_x = self.width-3
         pygame.display.flip()
-        state = self.get_states()
         if self.lives == 0:
             self.end = True
-        return (state, self.score, self.end, self.lives,  self.turns_allowed[i], collided)
+        if collided:
+            print("hit the ghost")
+        # if action != None and self.turns_allowed[self.direction_command] == False:
+        #     print("action", self.get_action_name(action),
+        #           self.turns_allowed[self.direction_command])
+        return (state, self.score, self.end, self.lives, not self.turns_allowed[self.direction_command], collided)
 
 
 if __name__ == '__main__':

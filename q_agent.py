@@ -72,9 +72,10 @@ class LearningAgent:
         self.eps_start = 0.9
         self.eps_end = 0.05
         self.eps_decay = 1000
+        self.last_state = []
         self.gamma = 0.99
         self.momentum = 0.95
-        self.replay_size = 40000
+        self.replay_size = 50000
         self.learning_rate = 0.0001
         self.steps = 0
         self.target = QNetwork().to(device)
@@ -113,17 +114,17 @@ class LearningAgent:
             return reward
         if eat_powerup:
             print("ate pellet")
-            reward += 3
+            reward += 5
             return reward
 
         if hit_wall:
             return -10  # Pacman hit a wall
         if hit_ghost:
+            print("damn ghost")
             return -200  # Pacman hit a ghost
         if ate_ghost:
             return 20
         if REVERSED[self.last_action] == action:
-            print("reversed")
             return -6
         # if self.last_reward == 0 and reward == 0:
         #     reward = -0.5
@@ -198,6 +199,7 @@ class LearningAgent:
         plt.savefig('plot.png')
 
     def process_state(self, states):
+        self.last_state = states
         walls_tensor = torch.from_numpy(states[0]).float().to(device)
         pellets_tensor = torch.from_numpy(states[1]).float().to(device)
         ghosts_tensor = torch.from_numpy(states[2]).float().to(device)
@@ -242,7 +244,7 @@ class LearningAgent:
         collided_in_skipped_frames = False
         frames = 0
         while True:
-            if frames % 3 == 0:
+            if frames % 2 == 0:
                 if collided_in_skipped_frames == False:
                     action = self.select_action(state)
                     action_t = action.item()
