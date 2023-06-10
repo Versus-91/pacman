@@ -190,11 +190,6 @@ class LearningAgent:
                 reward_sum += reward - last_score
             self.last_action = action_t
             last_score = reward
-            if remaining_lives < lives:
-                lives -= 1
-                reward_ = -10
-            if reward_ == last_score:
-                reward_ += -0.2
             print("action :", action_t, "reward :", reward_)
             observation = obs[0].flatten().astype(dtype=np.float32)
             next_state = torch.from_numpy(
